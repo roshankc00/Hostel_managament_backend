@@ -8,7 +8,6 @@ export const registerUserHandler = asyncHandler(async (req, res, next) => {
   try {
     console.log(req.body)
     const userExist = await UserModel.findOne({ email: req.body.email });
-    console.log(userExist,"wow")
 
     if (userExist) {
       return next(new ErrorHandler("User already exist", 400));

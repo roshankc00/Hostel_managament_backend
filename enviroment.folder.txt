@@ -1,0 +1,4 @@
+MONGO_URL=mongodb+srv://sangyog2058:7pt0Yqoo0ypP3Qau@task-manager.scyasr4.mongodb.net/Hostel-mgmt?retryWrites=true&w=majority
+PORT=3000
+SECRET_KEY="jwtsecretkey"
+EXPIRES_IN='30d'
