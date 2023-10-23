@@ -25,7 +25,7 @@ router.get('/google/callback', (req, res, next) => {
         res.cookie('isLoggedIn', true);
         res.redirect(`${process.env.CLIENT_URL}`);
         next()
-
+        
     })(req, res, next);
 });
 

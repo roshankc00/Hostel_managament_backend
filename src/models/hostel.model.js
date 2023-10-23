@@ -23,6 +23,10 @@ const hostelSchema=new mongoose.Schema({
         enum:['pending',"verified"],
         default:'pending'
     },
+    thumbnailUrl:{
+            url:String,
+            publicId:String
+    },
     images:[{
         url:{
             type:String
