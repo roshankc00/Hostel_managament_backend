@@ -3,11 +3,11 @@ import ErrorHandler from "../utils/errorHandler.js";
 import HostelModel from "../models/hostel.model.js";
 import validateMongodbId from "../utils/validateMongoDbid.js";
 import cloudinary from "../config/cloudinary.config.js";
-import fs from 'fs';
+import fs from "fs";
 
 export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const {name,city,localLocation,phone}=req.body
+    const { name, city, localLocation, phone } = req.body;
     const hostelExists = await HostelModel.findOne({ name: req.body.name });
 
     if (hostelExists) {
@@ -15,12 +15,12 @@ export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
     }
 
     const newHostel = await HostelModel.create({
-        name,
-        phone,
-        location:{
-            city,
-            localLocation
-        }
+      name,
+      phone,
+      location: {
+        city,
+        localLocation,
+      },
     });
 
     res.status(201).json({
@@ -73,8 +73,7 @@ export const addImages = asyncHandler(async (req, res, next) => {
     const id = req.body.hostelId;
 
     const hostel = await HostelModel.findById(id);
-    console.log(hostel)
-    console.log(hostel.images)
+
 
     for (let file of req.files) {
       let result;
@@ -91,15 +90,13 @@ export const addImages = asyncHandler(async (req, res, next) => {
       }
     }
 
-
-    for(let file of req.files){
-        try {
-            fs.unlinkSync(file.path);
-            console.log("Delete File successfully.");
-          } catch (error) {
-            console.log(error);
-          }
-
+    for (let file of req.files) {
+      try {
+        fs.unlinkSync(file.path);
+        console.log("Delete File successfully.");
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     await hostel.save();
@@ -109,7 +106,39 @@ export const addImages = asyncHandler(async (req, res, next) => {
       hostel,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     next(new ErrorHandler(error.message, 500));
   }
 });
+
+export const addthumbnailUrlHandler=asyncHandler(async(req,res,next)=>{
+    try {
+
+        const id = req.body.hostelId;
+        const hostel = await HostelModel.findById(id);
+
+       const  result = await cloudinary.v2.uploader.upload(req.file.path);
+        hostel.thumbnailUrl={
+            url:result.secure_url,
+            publicId:result.public_id
+        }
+
+        try {
+            fs.unlink(req.file.path)
+            
+        } catch (error) {
+            
+            next(new ErrorHandler(error.message, 500));        
+        }
+
+        await hostel.save()
+        res.status(200).json({
+            success:true,
+            hostel
+        })
+
+       
+    } catch (error) {
+    next(new ErrorHandler(error.message, 500));        
+    }
+})
