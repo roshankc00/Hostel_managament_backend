@@ -40,7 +40,7 @@ export const getSingleHostelHandler = asyncHandler(async (req, res, next) => {
       return next(new ErrorHandler("The id is not valid", 400));
     }
 
-    const hostel = await HostelModel.findById(id);
+    const hostel = await HostelModel.findById(id).populate("review");
 
     if (!hostel) {
       return next(new ErrorHandler("hostel with this id doesnt exist", 404));
@@ -73,7 +73,6 @@ export const addImages = asyncHandler(async (req, res, next) => {
     const id = req.body.hostelId;
 
     const hostel = await HostelModel.findById(id);
-
 
     for (let file of req.files) {
       let result;
@@ -111,34 +110,29 @@ export const addImages = asyncHandler(async (req, res, next) => {
   }
 });
 
-export const addthumbnailUrlHandler=asyncHandler(async(req,res,next)=>{
+export const addthumbnailUrlHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const id = req.body.hostelId;
+    const hostel = await HostelModel.findById(id);
+
+    const result = await cloudinary.v2.uploader.upload(req.file.path);
+    hostel.thumbnailUrl = {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+
     try {
-
-        const id = req.body.hostelId;
-        const hostel = await HostelModel.findById(id);
-
-       const  result = await cloudinary.v2.uploader.upload(req.file.path);
-        hostel.thumbnailUrl={
-            url:result.secure_url,
-            publicId:result.public_id
-        }
-
-        try {
-            fs.unlink(req.file.path)
-            
-        } catch (error) {
-            
-            next(new ErrorHandler(error.message, 500));        
-        }
-
-        await hostel.save()
-        res.status(200).json({
-            success:true,
-            hostel
-        })
-
-       
+      fs.unlink(req.file.path);
     } catch (error) {
-    next(new ErrorHandler(error.message, 500));        
+      next(new ErrorHandler(error.message, 500));
     }
-})
+
+    await hostel.save();
+    res.status(200).json({
+      success: true,
+      hostel,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
