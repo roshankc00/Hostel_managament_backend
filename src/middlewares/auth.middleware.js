@@ -1,8 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import jwt from 'jsonwebtoken'
-import env from '../utils/validateEnv'
-import UserModel from '../models/user.model'
-import ErrorHandler from '../utils/errorHandler'
+import UserModel from '../models/user.model.js'
+import ErrorHandler from '../utils/errorHandler.js'
 
 
 
