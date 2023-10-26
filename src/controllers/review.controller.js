@@ -5,7 +5,6 @@ import HostelModel from "../models/hostel.model.js";
 
 export const createReviewHandler = asyncHandler(async (req, res) => {
   try {
-    console.log(req.user);
     const { hostel: hostelId } = req.body;
     const isHostelValid = await HostelModel.findOne({ _id: hostelId });
     if (!isHostelValid) {
@@ -62,5 +61,42 @@ export const getSingleReview = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
+  }
+});
+
+export const updateReview = asyncHandler(async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    const review = await ReviewModel.findOne({ _id: req.params.id });
+    if (!review) {
+      next(new ErrorHandler(error.message, 500));
+    }
+    //check for permission
+    review.rating = rating;
+    review.comment = comment;
+    await review.save();
+    res.status(201).json({
+      success: true,
+      review: review,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+
+export const deleteReview = asyncHandler(async (req, res, next) => {
+  try {
+    const review = await ReviewModel.findOne({ _id: req.params.id });
+    if (!review) {
+      return next(new ErrorHandler("Review not found", 404));
+    }
+    await review.deleteOne();
+    // check for permission
+    res.status(200).json({
+      success: true,
+      msg: "Review deleted",
+    });
+  } catch (error) {
+    next(new ErrorHandler("Failed to delete review: " + error.message, 500));
   }
 });

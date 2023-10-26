@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      trim: true,
+    rating: {
+      type: Number,
       required: true,
     },
     comment: {
@@ -23,6 +22,53 @@ const reviewSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+reviewSchema.index({ hostel: 1, user: 1 }, { unique: true });
+
+reviewSchema.statics.calcAvgRating = async function (hostelId) {
+  const result = await this.aggregate([
+    {
+      $match: {
+        hostel: hostelId,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        averageRating: {
+          $avg: "$rating",
+        },
+        noOfReviews: {
+          $sum: 1,
+        },
+      },
+    },
+  ]);
+  try {
+    await this.model("Hostel").findOneAndUpdate(
+      { _id: hostelId },
+      {
+        averageRating: result[0]?.averageRating || 0,
+        noOfReviews: result[0]?.noOfReviews || 0,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+reviewSchema.post("save", async function () {
+  await this.constructor.calcAvgRating(this.hostel);
+});
+
+reviewSchema.post(
+  "deleteOne",
+  { document: true, query: false },
+  async function () {
+    await this.constructor.calcAvgRating(this.hostel);
+    console.log("ok");
+  }
 );
 
 const ReviewModel = mongoose.model("Review", reviewSchema);

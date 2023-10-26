@@ -27,6 +27,14 @@ const hostelSchema = new mongoose.Schema(
       url: String,
       publicId: String,
     },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    noOfReviews: {
+      type: Number,
+      default: 0,
+    },
     images: [
       {
         url: {
