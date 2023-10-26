@@ -1,8 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import jwt from 'jsonwebtoken'
-import env from '../utils/validateEnv'
-import UserModel from '../models/user.model'
-import ErrorHandler from '../utils/errorHandler'
+import UserModel from '../models/user.model.js'
+import ErrorHandler from '../utils/errorHandler.js'
 
 
 
@@ -20,10 +19,10 @@ export const checkAuth=asyncHandler(async(req,res,next)=>{
             throw new Error("register first")
         }
         let token=req.headers.authorization.split(' ')[1]
-        let decoded=jwt.verify(token,env.SECRET)
+        let decoded=jwt.verify(token,process.env.SECRET_KEY)
         const email=decoded.email
         const user=await UserModel.findOne({email})
-        req.user=user
+        req.user=user 
         next()   
     } catch (error) {
         next(new ErrorHandler(error.message, 500))
