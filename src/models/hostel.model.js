@@ -14,6 +14,9 @@ const hostelSchema = new mongoose.Schema(
         type: String,
       },
     },
+    description:{
+      type:String,
+    },
     phone: {
       type: String,
       required: true,
@@ -59,3 +62,6 @@ hostelSchema.virtual("review", {
 const HostelModel = mongoose.model("Hostel", hostelSchema);
 
 export default HostelModel;
+
+
+
