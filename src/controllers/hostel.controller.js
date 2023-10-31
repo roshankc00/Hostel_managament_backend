@@ -7,7 +7,7 @@ import fs from "fs";
 
 export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const { name, city, localLocation, phone } = req.body;
+    const { name, city, localLocation, phone, description } = req.body;
     const hostelExists = await HostelModel.findOne({ name: req.body.name });
 
     if (hostelExists) {
@@ -17,6 +17,7 @@ export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
     const newHostel = await HostelModel.create({
       name,
       phone,
+      description,
       location: {
         city,
         localLocation,
@@ -128,6 +129,77 @@ export const addthumbnailUrlHandler = asyncHandler(async (req, res, next) => {
     }
 
     await hostel.save();
+    res.status(200).json({
+      success: true,
+      hostel,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+
+export const updateHostelContentHandler = asyncHandler(
+  async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const isValid = validateMongodbId(id);
+      if (!isValid) {
+        return next(new ErrorHandler("The id is not valid", 400));
+      }
+
+      const hostel = await HostelModel.findById(id);
+
+      if (!hostel) {
+        return next(new ErrorHandler("hostel with this id doesnt exist", 404));
+      }
+      await HostelModel.findByIdAndUpdate(
+        id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+
+      const updHostel = await HostelModel.findById(id).populate("review");
+
+      res.status(200).json({
+        success: true,
+        updHostel,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const addHostelRulesAndTime = asyncHandler(async (req, res, next) => {
+  try {
+    const { rulesAndRegulation, timeSchedule } = req.body;
+
+    const id = req.params.id;
+    const isValid = validateMongodbId(id);
+    if (!isValid) {
+      return next(new ErrorHandler("The id is not valid", 400));
+    }
+
+    const hostel = await HostelModel.findById(id);
+
+    if (!hostel) {
+      return next(new ErrorHandler("hostel with this id doesnt exist", 404));
+    }
+
+    if (rulesAndRegulation) {
+      hostel.rulesAndRegulation.push(rulesAndRegulation);
+    }
+    if (timeSchedule) {
+      hostel.timeSchedule.push({
+        time: timeSchedule.time,
+        title: timeSchedule.title,
+      });
+    }
+
+    hostel.save();
+
     res.status(200).json({
       success: true,
       hostel,

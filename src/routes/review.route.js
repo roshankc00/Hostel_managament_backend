@@ -8,12 +8,14 @@ import {
   getSingleReview,
   updateReview,
   deleteReview,
+  getAllReviewsOfHostelHandler,
 } from "../controllers/review.controller.js";
 
-router.post("/review", checkAuth, createReviewHandler);
-router.get("/review", getAllReviews);
-router.patch("/review/update/:id", updateReview);
-router.delete("/review/delete/:id", deleteReview);
-router.get("/review/:id", getSingleReview);
+router.post("/reviews", checkAuth, createReviewHandler);
+router.get("/reviews", getAllReviews);
+router.patch("/reviews/:id",checkAuth, updateReview);
+router.delete("/reviews/:id", checkAuth, deleteReview);
+router.get("/reviews/:id", getSingleReview);
+router.post('/reviews-of-hostels',getAllReviewsOfHostelHandler)
 
 export default router;
