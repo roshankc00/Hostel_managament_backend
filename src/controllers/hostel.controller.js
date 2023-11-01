@@ -217,3 +217,18 @@ export const addHostelRulesAndTime = asyncHandler(async (req, res, next) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
+export const featuredHostel = asyncHandler(async (req, res, next) => {
+  try {
+    const hostels = await HostelModel.find({}).sort({ averageRating: -1 });
+    if (!hostels) {
+      return next(new ErrorHandler("hostels not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      hostels,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
