@@ -1,21 +1,30 @@
 import asyncHandler from "express-async-handler";
 import ErrorHandler from "../utils/errorHandler.js";
 import HostelModel from "../models/hostel.model.js";
+import UserModel from "../models/user.model.js";
 import validateMongodbId from "../utils/validateMongoDbid.js";
 import cloudinary from "../config/cloudinary.config.js";
 import fs from "fs";
 
 export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const { name, city, localLocation, phone, description } = req.body;
+    const { name, city, localLocation, phone, description, email, password } =
+      req.body;
     const hostelExists = await HostelModel.findOne({ name: req.body.name });
 
     if (hostelExists) {
       return next(new ErrorHandler("Hostel with this name already exist", 400));
     }
 
+    const emailExists = await UserModel.findOne({ email });
+    if (emailExists) {
+      return next(new ErrorHandler("User with this email already exist", 400));
+    }
+    await UserModel.create({ name, email, password, phone, role: "owner" });
+
     const newHostel = await HostelModel.create({
       name,
+      email,
       phone,
       description,
       location: {
