@@ -67,7 +67,13 @@ export const getSingleHostelHandler = asyncHandler(async (req, res, next) => {
 
 export const getAllHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const hostels = await HostelModel.find();
+    const { name } = req.query;
+    const queryObject = {};
+    if (name) {
+      queryObject.name = { $regex: name, $options: "i" };
+    }
+    // console.log(queryObj);
+    const hostels = await HostelModel.find(queryObject);
 
     res.status(200).json({
       success: true,
@@ -217,6 +223,7 @@ export const addHostelRulesAndTime = asyncHandler(async (req, res, next) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
+
 export const featuredHostel = asyncHandler(async (req, res, next) => {
   try {
     const hostels = await HostelModel.find({}).sort({ averageRating: -1 });
@@ -228,6 +235,13 @@ export const featuredHostel = asyncHandler(async (req, res, next) => {
       success: true,
       hostels,
     });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+export const searchHostel = asyncHandler(async (req, res, next) => {
+  try {
+    console.log(req.query);
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
   }
