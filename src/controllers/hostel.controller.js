@@ -7,26 +7,39 @@ import fs from "fs";
 
 export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const { name, city, localLocation, phone, description } = req.body;
-    const hostelExists = await HostelModel.findOne({ name: req.body.name });
+    const { name, hostelName, phone, email, password } = req.body;
+    const hostelExists = await HostelModel.findOne({ name: hostelName });
+
 
     if (hostelExists) {
       return next(new ErrorHandler("Hostel with this name already exist", 400));
     }
 
+    const emailExists = await UserModel.findOne({ email });
+    if (emailExists) {
+      return next(new ErrorHandler("User with this email already exist", 400));
+    }
+    const newUser = await UserModel.create({
+      name,
+      email,
+      password,
+      phone,
+      role: "owner",
+    });
+
     const newHostel = await HostelModel.create({
       name,
+      email,
       phone,
-      description,
-      location: {
-        city,
-        localLocation,
-      },
+      user: newUser._id,
     });
+
+    user.hostel = newHostel._id;
+    await user.save();
 
     res.status(201).json({
       success: true,
-      message: "Hostel registered successfully",
+      message: "Hostel And user registered successfully",
     });
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
@@ -59,6 +72,7 @@ export const getSingleHostelHandler = asyncHandler(async (req, res, next) => {
 export const getAllHostelHandler = asyncHandler(async (req, res, next) => {
   try {
     const hostels = await HostelModel.find();
+
 
     res.status(200).json({
       success: true,
@@ -146,6 +160,31 @@ export const updateHostelContentHandler = asyncHandler(
       if (!isValid) {
         return next(new ErrorHandler("The id is not valid", 400));
       }
+
+      const hostel = await HostelModel.findById(id);
+
+      if (!hostel) {
+        return next(new ErrorHandler("hostel with this id doesnt exist", 404));
+      }
+      await HostelModel.findByIdAndUpdate(
+        id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+
+      const updHostel = await HostelModel.findById(id).populate("review");
+
+      res.status(200).json({
+        success: true,
+        updHostel,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 
       const hostel = await HostelModel.findById(id);
 
