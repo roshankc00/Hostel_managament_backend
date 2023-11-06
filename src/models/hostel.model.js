@@ -6,6 +6,10 @@ const hostelSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     location: {
       city: {
         type: String,
@@ -14,8 +18,8 @@ const hostelSchema = new mongoose.Schema(
         type: String,
       },
     },
-    description:{
-      type:String,
+    description: {
+      type: String,
     },
     phone: {
       type: String,
@@ -62,6 +66,3 @@ hostelSchema.virtual("review", {
 const HostelModel = mongoose.model("Hostel", hostelSchema);
 
 export default HostelModel;
-
-
-
