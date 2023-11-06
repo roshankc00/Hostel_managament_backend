@@ -33,7 +33,7 @@ export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
       user: newUser._id,
     });
 
-    user.hostel = newHostel._id;
+    newUser.hostel = newHostel._id;
     await user.save();
 
     res.status(201).json({
