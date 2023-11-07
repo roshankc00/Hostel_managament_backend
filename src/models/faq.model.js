@@ -1,17 +1,19 @@
 import mongoose from "mongoose";
 
-const faqSchema=new mongoose.Schema({
-    question:{
-        type:String,
-        required:true
+const faqSchema = new mongoose.Schema(
+  {
+    question: {
+      type: String,
+      required: true,
     },
-    answer:{
-        type:String,
-        required:true
-    }
-},{timestamps:true})
+    answer: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
+const FaqModel = mongoose.model("Faq", faqSchema);
 
-const FaqModel=mongoose.model('Faq',faqSchema)
-
-export default FaqModel
+export default FaqModel;

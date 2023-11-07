@@ -8,9 +8,8 @@ import fs from "fs";
 
 export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const { name, city, localLocation, phone, description, email, password } =
-      req.body;
-    const hostelExists = await HostelModel.findOne({ name: req.body.name });
+    const { name, hostelName, phone, email, password } = req.body;
+    const hostelExists = await HostelModel.findOne({ name: hostelName });
 
     if (hostelExists) {
       return next(new ErrorHandler("Hostel with this name already exist", 400));
@@ -20,22 +19,27 @@ export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
     if (emailExists) {
       return next(new ErrorHandler("User with this email already exist", 400));
     }
-    await UserModel.create({ name, email, password, phone, role: "owner" });
+    const newUser = await UserModel.create({
+      name,
+      email,
+      password,
+      phone,
+      role: "owner",
+    });
 
     const newHostel = await HostelModel.create({
       name,
       email,
       phone,
-      description,
-      location: {
-        city,
-        localLocation,
-      },
+      user: newUser._id,
     });
+
+    newUser.hostel = newHostel._id;
+    await user.save();
 
     res.status(201).json({
       success: true,
-      message: "Hostel registered successfully",
+      message: "Hostel And user registered successfully",
     });
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
@@ -67,13 +71,8 @@ export const getSingleHostelHandler = asyncHandler(async (req, res, next) => {
 
 export const getAllHostelHandler = asyncHandler(async (req, res, next) => {
   try {
-    const { name } = req.query;
-    const queryObject = {};
-    if (name) {
-      queryObject.name = { $regex: name, $options: "i" };
-    }
-    // console.log(queryObj);
-    const hostels = await HostelModel.find(queryObject);
+    const hostels = await HostelModel.find();
+    console.log(req.user);
 
     res.status(200).json({
       success: true,
