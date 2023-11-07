@@ -1,12 +1,12 @@
 import asyncHandler from "express-async-handler";
 import ErrorHandler from "../utils/errorHandler.js";
-import  UserModel  from "../models/user.model.js";
+import UserModel from "../models/user.model.js";
 import { createToken } from "../utils/jwt.js";
 import validateMongodbId from "../utils/validateMongoDbid.js";
 
 export const registerUserHandler = asyncHandler(async (req, res, next) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const userExist = await UserModel.findOne({ email: req.body.email });
 
     if (userExist) {
@@ -53,7 +53,6 @@ export const loginUserHandler = asyncHandler(async (req, res, next) => {
   }
 });
 
-
 export const getSingleUserHandler = asyncHandler(async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -64,8 +63,8 @@ export const getSingleUserHandler = asyncHandler(async (req, res, next) => {
     }
 
     const user = await UserModel.findById(id);
-    if(!user){
-        return next(new ErrorHandler("User doesnt exist with this id",404))
+    if (!user) {
+      return next(new ErrorHandler("User doesnt exist with this id", 404));
     }
 
     res.status(200).json({
@@ -77,5 +76,15 @@ export const getSingleUserHandler = asyncHandler(async (req, res, next) => {
   }
 });
 
+export const getAllUserHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const users = await UserModel.find();
 
-
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
