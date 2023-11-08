@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import ErrorHandler from "../utils/errorHandler.js";
 import HostelModel from "../models/hostel.model.js";
+import UserModel from "../models/user.model.js";
 import validateMongodbId from "../utils/validateMongoDbid.js";
 import cloudinary from "../config/cloudinary.config.js";
 import fs from "fs";
@@ -217,6 +218,29 @@ export const addHostelRulesAndTime = asyncHandler(async (req, res, next) => {
       success: true,
       hostel,
     });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+
+export const featuredHostel = asyncHandler(async (req, res, next) => {
+  try {
+    const hostels = await HostelModel.find({}).sort({ averageRating: -1 });
+    if (!hostels) {
+      return next(new ErrorHandler("hostels not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      hostels,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+export const searchHostel = asyncHandler(async (req, res, next) => {
+  try {
+    console.log(req.query);
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
   }

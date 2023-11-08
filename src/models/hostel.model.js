@@ -63,6 +63,12 @@ const hostelSchema = new mongoose.Schema(
         },
       },
     ],
+    latitude: {
+      type: String,
+    },
+    longitude: {
+      type: String,
+    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
