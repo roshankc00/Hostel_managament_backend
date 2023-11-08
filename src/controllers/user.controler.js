@@ -6,6 +6,7 @@ import validateMongodbId from "../utils/validateMongoDbid.js";
 
 export const registerUserHandler = asyncHandler(async (req, res, next) => {
   try {
+
     const userExist = await UserModel.findOne({ email: req.body.email });
 
     if (userExist) {
@@ -73,4 +74,65 @@ export const getSingleUserHandler = asyncHandler(async (req, res, next) => {
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
   }
+
+
+export const getAllUserHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const users = await UserModel.find();
+
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
 });
+export const changeEmailHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const { newEmail } = req.body;
+    console.log(req.user);
+    const user = await UserModel.findById(req.user._id);
+    user.email = newEmail;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "User email updated successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+export const changePasswordHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const { newPassword, oldPassword } = req.body;
+    const user = await UserModel.findById(req.user._id);
+    const isPasswordCorrect = await user.matchPassword(oldPassword);
+    if (!isPasswordCorrect) {
+      return next(new ErrorHandler("Invalid credential", 401));
+    }
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "User password updated successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+export const changeNameHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const { newName } = req.body;
+    const user = await UserModel.findById(req.user._id);
+    user.password = newName;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "User Name updated successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+
