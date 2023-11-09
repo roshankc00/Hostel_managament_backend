@@ -6,7 +6,8 @@ import {
   getAllHostelHandler,
   getSingleHostelHandler,
   updateHostelContentHandler,
-  addHostelRulesAndTime,
+  addHostelRules,
+  addHostelTime,
   featuredHostel,
 } from "../controllers/hostel.controller.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -24,7 +25,8 @@ router.post(
   upload.single("image"),
   addthumbnailUrlHandler
 );
-router.post("/hostel/addTimeAndRule/:id", addHostelRulesAndTime);
+router.post("/hostel/addRule/:id", addHostelRules);
+router.post("/hostel/addTime/:id", addHostelTime);
 router.patch("/hostels/:id", updateHostelContentHandler);
 
 export default router;
