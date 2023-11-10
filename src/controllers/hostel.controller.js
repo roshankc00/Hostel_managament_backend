@@ -35,7 +35,7 @@ export const RegisterHostelHandler = asyncHandler(async (req, res, next) => {
     });
 
     newUser.hostel = newHostel._id;
-    await user.save();
+    await newUser.save();
 
     res.status(201).json({
       success: true,
@@ -72,7 +72,6 @@ export const getSingleHostelHandler = asyncHandler(async (req, res, next) => {
 export const getAllHostelHandler = asyncHandler(async (req, res, next) => {
   try {
     const hostels = await HostelModel.find();
-    console.log(req.user);
 
     res.status(200).json({
       success: true,
