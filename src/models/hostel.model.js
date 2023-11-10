@@ -42,17 +42,7 @@ const hostelSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    rulesAndRegulation: [
-      {
-        type: String,
-      },
-    ],
-    timeSchedule: [
-      {
-        time: { type: String },
-        title: { type: String },
-      },
-    ],
+
     images: [
       {
         url: {

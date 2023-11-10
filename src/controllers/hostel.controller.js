@@ -186,67 +186,6 @@ export const updateHostelContentHandler = asyncHandler(
   }
 );
 
-export const addHostelRules = asyncHandler(async (req, res, next) => {
-  try {
-    const { rulesAndRegulation } = req.body;
-
-    const id = req.params.id;
-    const isValid = validateMongodbId(id);
-    if (!isValid) {
-      return next(new ErrorHandler("The id is not valid", 400));
-    }
-
-    const hostel = await HostelModel.findById(id);
-
-    if (!hostel) {
-      return next(new ErrorHandler("hostel with this id doesnt exist", 404));
-    }
-
-    hostel.rulesAndRegulation.push(rulesAndRegulation);
-
-    hostel.save();
-
-    res.status(200).json({
-      success: true,
-      hostel,
-    });
-  } catch (error) {
-    next(new ErrorHandler(error.message, 500));
-  }
-});
-
-export const addHostelTime = asyncHandler(async (req, res, next) => {
-  try {
-    const { timeSchedule } = req.body;
-
-    const id = req.params.id;
-    const isValid = validateMongodbId(id);
-    if (!isValid) {
-      return next(new ErrorHandler("The id is not valid", 400));
-    }
-
-    const hostel = await HostelModel.findById(id);
-
-    if (!hostel) {
-      return next(new ErrorHandler("hostel with this id doesnt exist", 404));
-    }
-
-    hostel.timeSchedule.push({
-      time: timeSchedule.time,
-      title: timeSchedule.title,
-    });
-
-    hostel.save();
-
-    res.status(200).json({
-      success: true,
-      hostel,
-    });
-  } catch (error) {
-    next(new ErrorHandler(error.message, 500));
-  }
-});
-
 export const featuredHostel = asyncHandler(async (req, res, next) => {
   try {
     const hostels = await HostelModel.find({}).sort({ averageRating: -1 });

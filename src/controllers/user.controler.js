@@ -6,7 +6,6 @@ import validateMongodbId from "../utils/validateMongoDbid.js";
 
 export const registerUserHandler = asyncHandler(async (req, res, next) => {
   try {
-
     const userExist = await UserModel.findOne({ email: req.body.email });
 
     if (userExist) {
@@ -74,7 +73,7 @@ export const getSingleUserHandler = asyncHandler(async (req, res, next) => {
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
   }
-
+});
 
 export const getAllUserHandler = asyncHandler(async (req, res, next) => {
   try {
@@ -121,11 +120,12 @@ export const changePasswordHandler = asyncHandler(async (req, res, next) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
+
 export const changeNameHandler = asyncHandler(async (req, res, next) => {
   try {
     const { newName } = req.body;
     const user = await UserModel.findById(req.user._id);
-    user.password = newName;
+    user.name = newName;
     await user.save();
     res.status(200).json({
       success: true,
@@ -135,4 +135,3 @@ export const changeNameHandler = asyncHandler(async (req, res, next) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
-
