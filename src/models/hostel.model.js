@@ -10,6 +10,7 @@ const hostelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+
     location: {
       city: {
         type: String,
@@ -42,17 +43,7 @@ const hostelSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    rulesAndRegulation: [
-      {
-        type: String,
-      },
-    ],
-    timeSchedule: [
-      {
-        time: { type: String },
-        title: { type: String },
-      },
-    ],
+
     images: [
       {
         url: {
