@@ -40,11 +40,21 @@ export const updateRule = asyncHandler(async (req, res, next) => {
   try {
     const { title } = req.body;
     const rules = await rulesModel.findById(req.params.id);
+
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Title is required",
+      });
+    }
+
     rules.title = title;
-    rules.save();
+
+    await rules.save();
 
     res.status(200).json({
       success: true,
+      message: "Title updated",
       rules,
     });
   } catch (error) {

@@ -11,7 +11,7 @@ const timeSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      emum: [
+      enum: [
         "sunday",
         "monday",
         "tuesday",
