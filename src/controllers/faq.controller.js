@@ -22,7 +22,7 @@ export const getSingleFaqHandler = asyncHandler(async (req, res, next) => {
   try {
     const id = req.params.id;
     const isValid = validateMongodbId(id);
-    console.log(isValid)
+    console.log(isValid);
     if (!isValid) {
       return next(new ErrorHandler("Provide us the valid monogo id ", 400));
     }
@@ -36,7 +36,7 @@ export const getSingleFaqHandler = asyncHandler(async (req, res, next) => {
       faq,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return next(new ErrorHandler(error.message, 500));
   }
 });
