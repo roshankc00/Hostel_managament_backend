@@ -32,11 +32,15 @@ export const addHostelTime = asyncHandler(async (req, res, next) => {
 export const getAllTimes = asyncHandler(async (req, res, next) => {
   try {
     const { hostelId } = req.body;
-    const times = await timeModel.find({ hostel: hostelId });
 
     const isHostelAvailable = await HostelModel.findById(hostelId);
     if (!isHostelAvailable) {
       return next(new ErrorHandler("Hostel not available", 400));
+    }
+    const times = await timeModel.find({ hostel: hostelId });
+
+    if (times.length === 0) {
+      return next(new ErrorHandler("Time table not available", 400));
     }
 
     res.status(200).json({

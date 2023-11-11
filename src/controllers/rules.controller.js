@@ -27,12 +27,18 @@ export const addHostelRules = asyncHandler(async (req, res, next) => {
 export const getAllRules = asyncHandler(async (req, res, next) => {
   try {
     const { hostelId } = req.body;
+
     const isHostelAvailable = await hostelModel.findById(hostelId);
     if (!isHostelAvailable) {
       return next(new ErrorHandler("Hostel not available", 400));
     }
 
     const rules = await rulesModel.find({ hostel: hostelId });
+
+    if (rules.length === 0) {
+      return next(new ErrorHandler("rules not available", 400));
+    }
+
     res.status(200).json({
       success: true,
       rules,
