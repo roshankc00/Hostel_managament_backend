@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import ErrorHandler from "../utils/errorHandler.js";
 import validateMongodbId from "../utils/validateMongoDbid.js";
 import timeModel from "../models/time.model.js";
+import HostelModel from "../models/hostel.model.js";
 
 export const addHostelTime = asyncHandler(async (req, res, next) => {
   try {
@@ -32,6 +33,12 @@ export const getAllTimes = asyncHandler(async (req, res, next) => {
   try {
     const { hostelId } = req.body;
     const times = await timeModel.find({ hostel: hostelId });
+
+    const isHostelAvailable = await HostelModel.findById(hostelId);
+    if (!isHostelAvailable) {
+      return next(new ErrorHandler("Hostel not available", 400));
+    }
+
     res.status(200).json({
       success: true,
       times,
