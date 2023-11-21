@@ -7,6 +7,7 @@ import faqRoute from "./faq.route.js";
 import contactFormRoute from "./contactForm.route.js";
 import rulesRoute from "./rules.route.js";
 import timeRoutes from "./time.route.js";
+import roomRoutes from "./roomRoute.js";
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use("/auth", authRoute);
 router.use("/api/v1", contactFormRoute);
 router.use("/api/v1", rulesRoute);
 router.use("/api/v1", timeRoutes);
+router.use("/api/v1", roomRoutes);
 
 export default router;

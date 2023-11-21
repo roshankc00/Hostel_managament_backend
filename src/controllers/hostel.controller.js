@@ -207,3 +207,18 @@ export const searchHostel = asyncHandler(async (req, res, next) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
+
+export const searchForHostel = asyncHandler(async (req, res, next) => {
+  try {
+    const keyword = req.query.keyword;
+    const data = await HostelModel.find({
+      $or: [{ name: { $regex: keyword } }],
+    });
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});

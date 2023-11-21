@@ -9,7 +9,7 @@ import {
 } from "../controllers/times.controller.js";
 
 router.post("/time", addHostelTime);
-router.get("/time", getAllTimes);
+router.post("/time-hostel", getAllTimes);
 router.patch("/time/:id", updateTimes);
 router.delete("/time/:id", deleteTimes);
 

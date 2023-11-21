@@ -7,6 +7,7 @@ import {
   getSingleHostelHandler,
   updateHostelContentHandler,
   featuredHostel,
+  searchForHostel,
 } from "../controllers/hostel.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { checkAuth } from "../middlewares/auth.middleware.js";
@@ -23,6 +24,7 @@ router.post(
   upload.single("image"),
   addthumbnailUrlHandler
 );
+router.post("/search-me", searchForHostel);
 router.patch("/hostels/:id", updateHostelContentHandler);
 
 export default router;
