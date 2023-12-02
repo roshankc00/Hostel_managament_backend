@@ -9,7 +9,7 @@ import {
 } from "../controllers/rules.controller.js";
 
 router.post("/rules", addHostelRules);
-router.get("/rules", getAllRules);
+router.post("/rules-hostel", getAllRules);
 router.patch("/rules/:id", updateRule);
 router.delete("/rules/:id", deleteRule);
 

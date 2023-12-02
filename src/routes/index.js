@@ -8,6 +8,7 @@ import contactFormRoute from "./contactForm.route.js";
 import rulesRoute from "./rules.route.js";
 import timeRoutes from "./time.route.js";
 import roomRoutes from "./roomRoute.js";
+import orderRoutes from "./order.route.js";
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use("/api/v1", contactFormRoute);
 router.use("/api/v1", rulesRoute);
 router.use("/api/v1", timeRoutes);
 router.use("/api/v1", roomRoutes);
+router.use("/api/v1", orderRoutes);
 
 export default router;

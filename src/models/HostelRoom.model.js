@@ -6,6 +6,15 @@ const roomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    totalRooms: {
+      type: Number,
+      required: true,
+    },
+    totalVacentRooms: {
+      type: Number,
+      required: true,
+    },
+
     price: {
       type: String,
       required: true,

@@ -44,7 +44,9 @@ export const findSingleOrder = asyncHandler(async (req, res) => {
 
 export const getAllTheOrderOfHostel = asyncHandler(async (req, res) => {
   try {
-    const allOrders = await OrderModel.find({ hostel: req.body.hostelId });
+    const allOrders = await OrderModel.find({
+      hostel: req.body.hostelId,
+    }).populate("user");
     res.status(200).json({
       success: true,
       allOrders,
@@ -53,3 +55,16 @@ export const getAllTheOrderOfHostel = asyncHandler(async (req, res) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
+
+export const getAllTheOrdersForSuperadmin = asyncHandler(
+  async (req, res, next) => {
+    try {
+      const allOrders = await OrderModel.find().populate("user");
+
+      res.status(200).json({
+        success: true,
+        allOrders,
+      });
+    } catch (error) {}
+  }
+);

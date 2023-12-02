@@ -12,11 +12,12 @@ export const addHostelRules = asyncHandler(async (req, res, next) => {
       return next(new ErrorHandler("The id is not valid", 400));
     }
 
-    await rulesModel.create({ title, hostel: hostelId });
+    const rule = await rulesModel.create({ title, hostel: hostelId });
 
     res.status(200).json({
       success: true,
       message: "Rules created successfully",
+      rule,
     });
   } catch (error) {
     next(new ErrorHandler(error.message, 500));

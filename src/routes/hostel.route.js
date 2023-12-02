@@ -24,7 +24,7 @@ router.post(
   upload.single("image"),
   addthumbnailUrlHandler
 );
-router.post("/search-me", searchForHostel);
+router.get("/search-me", searchForHostel);
 router.patch("/hostels/:id", updateHostelContentHandler);
 
 export default router;

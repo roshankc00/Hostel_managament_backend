@@ -1,9 +1,9 @@
 import passport from "passport";
 import { Strategy } from "passport-google-oauth20";
-import 'dotenv/config'
+import "dotenv/config";
 import UserModel from "../models/user.model.js";
 
-const clientId =process.env.GOOGLE_CLIENT_ID ?? "";
+const clientId = process.env.GOOGLE_CLIENT_ID ?? "";
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
 
 export const passportInitialize = () => {
@@ -14,31 +14,26 @@ export const passportInitialize = () => {
         clientSecret: clientSecret,
         callbackURL: "/auth/google/callback",
       },
-      async function (
-        accessToken,
-        refreshToken,
-        profile,
-        cb
-      ) {
+      async function (accessToken, refreshToken, profile, cb) {
         console.log(profile);
-        const existUser =await UserModel.findOne({email:profile['_json'].email})
+        const existUser = await UserModel.findOne({
+          email: profile["_json"].email,
+        });
 
-        if(existUser){
+        if (existUser) {
           cb(null, profile);
-        }
-        else{
-          const data={
-            name:profile['_json'].name,
-            email:profile['_json'].email,
-          }
-          const user=new UserModel(data);
+        } else {
+          const data = {
+            name: profile["_json"].name,
+            email: profile["_json"].email,
+          };
+          const user = new UserModel(data);
           await user.save();
           cb(null, profile);
         }
       }
     )
   );
-  
 
   passport.serializeUser((user, done) => {
     done(null, user);
