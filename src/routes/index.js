@@ -9,6 +9,7 @@ import rulesRoute from "./rules.route.js";
 import timeRoutes from "./time.route.js";
 import roomRoutes from "./roomRoute.js";
 import orderRoutes from "./order.route.js";
+import analyticsRoutes from "./analytics.route.js";
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use("/api/v1", rulesRoute);
 router.use("/api/v1", timeRoutes);
 router.use("/api/v1", roomRoutes);
 router.use("/api/v1", orderRoutes);
+router.use("/api/v1", analyticsRoutes);
 
 export default router;
