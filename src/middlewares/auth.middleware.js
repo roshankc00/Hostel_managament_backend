@@ -7,11 +7,11 @@ import ErrorHandler from "../utils/errorHandler.js";
 export const checkAuth = asyncHandler(async (req, res, next) => {
   try {
     if (!req.headers.authorization) {
-      next(new ErrorHandler("no token is attach to header",401));
+      next(new ErrorHandler("no token is attach to header", 401));
     }
     let checktoken = req.headers.authorization.startsWith("Bearer");
     if (!checktoken) {
-      next(new ErrorHandler("please register yourself first",401));
+      next(new ErrorHandler("please register yourself first", 401));
     }
     let token = req.headers.authorization.split(" ")[1];
     let decoded = jwt.verify(token, process.env.SECRET_KEY);

@@ -3,17 +3,19 @@ import ErrorHandler from "../utils/errorHandler.js";
 import RoomModel from "../models/HostelRoom.model.js";
 import cloudinary from "../config/cloudinary.config.js";
 import HostelModel from "../models/hostel.model.js";
+import { deleteImageBulb, uploadImageInBulb } from "../azure/upload.image.js";
+import fs from "fs";
 
 export const createHostelRoom = asyncHandler(async (req, res, next) => {
   try {
-    const { name, price, description, hostelId, totalVacentRooms, totalRooms } =
+    const { name, price, description, hostelId, totalVacentSeats, totalSeats } =
       req.body;
-    const myCloud = await cloudinary.v2.uploader.upload(req.file.path);
-
+    const myCloud = await uploadImageInBulb(req.file.path, next);
     const image = {
-      url: myCloud.secure_url,
-      publicId: myCloud.public_id,
+      url: myCloud.imageUrl,
+      bulbName: myCloud.blobName,
     };
+    fs.unlinkSync(req.file.path);
 
     const hostel = await RoomModel.create({
       name,
@@ -21,8 +23,8 @@ export const createHostelRoom = asyncHandler(async (req, res, next) => {
       description,
       hostelId,
       image,
-      totalVacentRooms,
-      totalRooms,
+      totalSeats,
+      totalVacentSeats,
     });
     res.status(201).json({
       success: true,
@@ -56,13 +58,18 @@ export const deleteHostelRoom = asyncHandler(async (req, res, next) => {
     if (!room) {
       return next(new ErrorHandler("hostel with this id doesnt exist", 400));
     }
+    console.log(room.image.bulbName);
     await RoomModel.findByIdAndDelete(id);
+    if (room?.image?.bulbName) {
+      await deleteImageBulb(room?.image?.bulbName);
+    }
 
     res.status(200).json({
       success: true,
       message: "Room deleted successfully",
     });
   } catch (error) {
+    console.log(error);
     next(new ErrorHandler(error.message, 500));
   }
 });
@@ -108,13 +115,17 @@ export const EditHostelRoom = asyncHandler(async (req, res, next) => {
       if (!req.file) {
         return next(new ErrorHandler("Image field is required"));
       }
-      const myCloud = await cloudinary.v2.uploader.upload(req.file.path);
+      if (room.image.bulbName) {
+        await deleteImageBulb(room.image.bulbName);
+      }
+      const myCloud = await await uploadImageInBulb(req.file.path, next);
 
       const image = {
-        url: myCloud.secure_url,
-        publicId: myCloud.public_id,
+        url: myCloud.imageUrl,
+        bulbName: myCloud.blobName,
       };
       req.body.image = image;
+      fs.unlinkSync(req.file.path);
       updHostel = await RoomModel.findByIdAndUpdate(
         id,
         { $set: req.body },

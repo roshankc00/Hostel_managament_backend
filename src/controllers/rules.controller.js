@@ -32,6 +32,7 @@ export const getAllRules = asyncHandler(async (req, res, next) => {
       success: true,
       rules,
     });
+    console.log(rules);
   } catch (error) {
     next(new ErrorHandler(error.message, 500));
   }

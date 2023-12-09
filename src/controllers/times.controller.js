@@ -12,7 +12,7 @@ export const addHostelTime = asyncHandler(async (req, res, next) => {
       return next(new ErrorHandler("The id is not valid", 400));
     }
 
-    const rule = await timeModel.create({
+    const timeShedule = await timeModel.create({
       title,
       time,
       category,
@@ -22,6 +22,7 @@ export const addHostelTime = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Time table created successfully",
+      timeShedule,
     });
   } catch (error) {
     next(new ErrorHandler(error.message, 500));

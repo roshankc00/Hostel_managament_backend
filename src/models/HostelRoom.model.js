@@ -6,11 +6,11 @@ const roomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    totalRooms: {
+    totalSeats: {
       type: Number,
       required: true,
     },
-    totalVacentRooms: {
+    totalVacentSeats: {
       type: Number,
       required: true,
     },
@@ -23,7 +23,7 @@ const roomSchema = new mongoose.Schema(
       url: {
         type: String,
       },
-      publicId: {
+      bulbName: {
         type: String,
       },
     },

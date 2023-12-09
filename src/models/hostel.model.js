@@ -49,7 +49,7 @@ const hostelSchema = new mongoose.Schema(
         url: {
           type: String,
         },
-        publicId: {
+        bulbName: {
           type: String,
         },
       },
@@ -59,6 +59,14 @@ const hostelSchema = new mongoose.Schema(
     },
     longitude: {
       type: String,
+    },
+    hostelRegisterDocument: {
+      url: {
+        type: String,
+      },
+      bulbName: {
+        type: String,
+      },
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

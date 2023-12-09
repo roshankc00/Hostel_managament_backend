@@ -11,15 +11,7 @@ const timeSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      enum: [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-      ],
+      type: String,
     },
     hostel: {
       type: mongoose.Schema.ObjectId,

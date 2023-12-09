@@ -218,3 +218,78 @@ export const changeNameHandler = asyncHandler(async (req, res, next) => {
     next(new ErrorHandler(error.message, 500));
   }
 });
+
+export const forgetPasswordHandler = asyncHandler(async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return next(new ErrorHandler("user with this email doesnt exist "));
+    }
+    const activationcode = Math.floor(1000 + Math.random() * 9000).toString();
+    const token = jwt.sign(
+      {
+        email,
+        activationcode,
+      },
+      process.env.FORGET_PASSWORD_TOKEN,
+      { expiresIn: "5m" }
+    );
+
+    const html = `<div> <p>  Your forget password Code is  <br/>$<h1> ${activationcode} </h1> <br/> <br/> If you havent requested for token  then please kindlty ignore this mail sry  </p> </div>`;
+    try {
+      await sendMail({
+        email: email,
+        subject: "Recover your account",
+        html,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "mail sent successfully",
+      token,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 500));
+  }
+});
+
+export const resetForgetPasswordHandler = asyncHandler(
+  async (req, res, next) => {
+    try {
+      const { forgetToken, forgetCode, newPassword } = req.body;
+      const data = jwt.verify(forgetToken, process.env.FORGET_PASSWORD_TOKEN);
+      console.log(data);
+      if (forgetCode !== data.activationcode) {
+        return next(new ErrorHandler("the token is not valid", 400));
+      }
+      if (!data) {
+        return next(new ErrorHandler("token expired", 400));
+      }
+
+      const user = await UserModel.findOne({ email: data.email });
+      console.log(user);
+      if (!user) {
+        return next(
+          new ErrorHandler(
+            "User with this email doesnt exist or token is expired",
+            400
+          )
+        );
+      }
+      user.password = newPassword;
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    } catch (error) {
+      console.log(error);
+      next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
